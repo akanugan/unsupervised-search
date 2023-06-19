@@ -31,7 +31,8 @@
     "weights": false,
     "lr": 0.001,
     "update_learning_rate": true,
-    "tau_annealing": true
+    "tau_annealing": true,
+    "energyT": true
   },
   "batcher": {
     "minCparam": 0,

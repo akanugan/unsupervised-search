@@ -1,6 +1,7 @@
 import torch
 import pytorch_lightning as pl
 import model_blocks 
+from model_blocks import ms_from_p4s
 
 class StepLightning(pl.LightningModule):
 
@@ -10,6 +11,7 @@ class StepLightning(pl.LightningModule):
                  lr = 1e-3,
                  update_learning_rate = True,
                  tau_annealing = True,
+                 energyT = True,
                  weights = None):
         super().__init__()
 
@@ -19,6 +21,8 @@ class StepLightning(pl.LightningModule):
         self.lr = lr
         self.update_learning_rate = update_learning_rate
         self.tau_annealing = tau_annealing
+        self.energyT = energyT
+        self.T = encoder_config["out_dim"]
 
         # use the weights hyperparameters
         if weights: 
@@ -140,7 +144,15 @@ class StepLightning(pl.LightningModule):
         l = {}
         l["mse"]         =  torch.mean((c1_out-c1)**2 + (c2_out-c2)**2)
         l["mse_crossed"] =  torch.mean((c1_out-c2)**2 + (c2_out-c1)**2)
-        l["ISR_energy"]  =  torch.mean(cp4[:,0,0])*self.loss_config["scale_ISR_loss"]
+
+        if self.T ==3:
+            isr = cp4[:,0]
+            if self.energyT:
+                isr_m2 = m2s_from_p4s(isr)
+                isr_pt2 = isr[:,1]**2+isr[:,2]**2
+                l["ISR_energy"]  =  torch.mean(torch.sqrt(isr_pt2+isr_m2))*self.loss_config["scale_ISR_loss"]
+            else:
+                l["ISR_energy"]  =  torch.mean(isr[:,0])*self.loss_config["scale_ISR_loss"]
         #l["gluino_pt2"]  =  -torch.mean(torch.sqrt(cp4[:,-1,1]**2+cp4[:,-1,2]**2)+torch.sqrt(cp4[:,-2,1]**2+cp4[:,-2,2]**2))
         #l["massdiff"]  =  torch.mean((c1[:,-1]-c2[:,-1])**2)/10
         #l["mse_random"]  =  torch.mean((c1random_out-c1random)**2 + (c2random_out-c2random)**2)

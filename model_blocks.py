@@ -132,7 +132,7 @@ class AE_block(nn.Module):
 
 class Encoder(nn.Module):
 
-    def __init__(self, embed_input_dim, embed_nlayers, embed_dim, mlp_input_dim, mlp_nlayers, mlp_dim, attn_blocks_n, attn_block_num_heads, attn_block_ffwd_on, attn_block_ffwd_nlayers, attn_block_ffwd_dim, gumbel_softmax_config, out_dim, doWij, doCandidateAttention, ae_dim, ae_depth, random_mode, do_gumbel):
+    def __init__(self, embed_input_dim, embed_nlayers, embed_dim, mlp_input_dim, mlp_nlayers, mlp_dim, attn_blocks_n, attn_block_num_heads, attn_block_ffwd_on, attn_block_ffwd_nlayers, attn_block_ffwd_dim, gumbel_softmax_config, out_dim, doWij, doCandidateAttention, ae_dim, ae_depth, random_mode, do_gumbel, mass_scale):
 
         super().__init__()
 
@@ -165,6 +165,7 @@ class Encoder(nn.Module):
         self.ae_out = AE_block(ae_dim, embed_dim-self.T+1, ae_depth)
         self.random_mode = random_mode
         self.do_gumbel = do_gumbel
+        self.mass_scale = mass_scale
 
     def forward(self, x, w, mask, loss=None):
 
@@ -204,14 +205,14 @@ class Encoder(nn.Module):
         jp4 = x_to_p4(originalx)
         cchoice  = self.get_jet_choice(x, debug=False)
         cp4 = torch.bmm(cchoice.transpose(2,1), jp4)
-        cmass = ms_from_p4s(cp4)/100 #arbitrary scaling factor 
+        cmass = ms_from_p4s(cp4)/self.mass_scale #arbitrary scaling factor 
 
         #build random candidates
         randomchoice = self.get_random_choice(cchoice, mask)
         crandom = torch.bmm(randomchoice.transpose(2,1), x)
         crandom = self.cand_blocks[ib](Q=c, K=c, V=c, key_padding_mask=None, attn_mask=None)
         crandomp4 = torch.bmm(randomchoice.transpose(2,1), jp4)
-        crandommass = ms_from_p4s(crandomp4)/100 #arbitrary scaling factor
+        crandommass = ms_from_p4s(crandomp4)/self.mass_scale #arbitrary scaling factor
 
         c       = torch.cat([c[:,:,self.T:],cmass[:,:,None]],-1) #drop the category scores, add the mass
         crandom = torch.cat([crandom[:,:,self.T:],crandommass[:,:,None]],-1) #drop the category scores, add the mass
@@ -306,10 +307,13 @@ def x_to_p4(x):
 
     return torch.stack([e,px,py,pz], -1)
     
+def m2s_from_p4s(p4s, eps=0):
+    m2s = (p4s[...,0]*(1+eps))**2 - p4s[...,1]**2 - p4s[...,2]**2 - p4s[...,3]**2+eps
+    return m2s
+
 def ms_from_p4s(p4s):
     ''' copied from energyflow '''
-    eps = 0.0001
-    m2s = (p4s[...,0]*(1+eps))**2 - p4s[...,1]**2 - p4s[...,2]**2 - p4s[...,3]**2+eps
+    m2s = m2s_from_p4s(p4s, eps=0.0001)
     mask = (m2s < 0)
     if torch.sum(mask)>0:
       print(m2s[mask],p4s[mask])

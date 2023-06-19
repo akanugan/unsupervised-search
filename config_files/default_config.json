@@ -13,6 +13,7 @@
       "attn_block_ffwd_nlayers": 3,
       "attn_block_ffwd_dim": 32,
       "out_dim": 3,
+      "mass_scale": 100,
       "do_gumbel": false,
       "gumbel_softmax_config": {
         "tau": 1,
@@ -31,7 +32,8 @@
     "weights": false,
     "lr": 0.001,
     "update_learning_rate": true,
-    "tau_annealing": true
+    "tau_annealing": true,
+    "energyT": true
   },
   "batcher": {
     "minCparam": 0,
