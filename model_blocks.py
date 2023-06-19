@@ -307,13 +307,13 @@ def x_to_p4(x):
 
     return torch.stack([e,px,py,pz], -1)
     
-def m2s_from_p4s(p4s, eps=0):
+def m2s_from_p4s(p4s, eps=0.0001):
     m2s = (p4s[...,0]*(1+eps))**2 - p4s[...,1]**2 - p4s[...,2]**2 - p4s[...,3]**2+eps
     return m2s
 
 def ms_from_p4s(p4s):
     ''' copied from energyflow '''
-    m2s = m2s_from_p4s(p4s, eps=0.0001)
+    m2s = m2s_from_p4s(p4s)
     mask = (m2s < 0)
     if torch.sum(mask)>0:
       print(m2s[mask],p4s[mask])

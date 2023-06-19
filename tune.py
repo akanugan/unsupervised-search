@@ -26,7 +26,7 @@ from pytorch_lightning.loggers import TensorBoardLogger
 # ray tune
 from ray import air, tune
 from ray.tune.integration.pytorch_lightning import TuneReportCallback
-from ray.tune.schedulers import ASHAScheduler, PopulationBasedTraining
+from ray.tune.schedulers import ASHAScheduler, PopulationBasedTraining, FIFOScheduler
 from ray.tune import CLIReporter
 
 # custom code
@@ -120,17 +120,11 @@ if __name__ == "__main__":
     }
 
     # make scheduler
-    scheduler = PopulationBasedTraining(
-        perturbation_interval=4,
-        hyperparam_mutations={
-            "lr": tune.loguniform(1e-4, 1e-1),
-            "batch_size": tune.choice([512, 1024, 2048, 4096])
-        }
-    )
+    scheduler = FIFOScheduler()
 
     # change the CLI output
     reporter = CLIReporter(
-        parameter_columns = list(config.keys())+[ "lr", "batch_size"],
+        parameter_columns = list(config.keys()),
         metric_columns=["val_loss", "training_iteration"]
     )
 
