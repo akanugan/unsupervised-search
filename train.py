@@ -17,6 +17,7 @@ from sklearn.model_selection import train_test_split
 import h5py
 import datetime
 import json
+import yaml
 
 # custom code
 from batcher import loadDataFromH5
@@ -38,7 +39,33 @@ if __name__ == "__main__":
     # load configuration
     print(f"Using configuration file: {ops.config_file}")
     with open(ops.config_file, 'r') as fp:
-        config = json.load(fp)
+        if ops.config_file.endswith('json'):
+            config = json.load(fp)
+        elif ops.config_file.endswith('yaml'):
+            config = {
+                       "batcher": {
+                         "minCparam": 0,
+                         "minNjetsAbovePtCut": 0,
+                         "minNjets": 0,
+                         "split": [
+                           0.9,
+                           0.1,
+                           0.0
+                         ],
+                         "reweight": 0,
+                         "eventSelection": "",
+                         "teacher": False
+                       },
+                       "trainer": {
+                         "precision": 32,
+                         "gradient_clip_val": 0.1
+                       },
+                       "batch_size": 2048
+                     }
+            config["model"] = yaml.load(fp, Loader=yaml.Loader)
+            if 'lightning_logs' in ops.config_file:
+                config['model']['encoder_config']['do_gumbel'] = True
+                config['model']['encoder_config']['mass_scale'] = 100
     print(config)
 
     config["model"]["weights"] = ops.weights
@@ -69,7 +96,7 @@ if __name__ == "__main__":
     # callbacks
     callbacks = [
         ModelCheckpoint(monitor="train_loss", dirpath=checkpoint_dir, filename='cp-{epoch:04d}-{step}', every_n_train_steps = 1, save_top_k=20), # 0=no models, -1=all models, N=n models, set save_top_k=-1 to save all checkpoints
-        EarlyStopping(monitor="val_loss", patience=2),
+        EarlyStopping(monitor="val_loss", patience=3),
     ]
 
     # torch lightning trainer

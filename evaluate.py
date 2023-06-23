@@ -10,7 +10,7 @@ import argparse
 import numpy as np
 import os
 import h5py
-import json
+import json, yaml
 import glob
 from tqdm import tqdm 
 from model_blocks import x_to_p4
@@ -58,7 +58,7 @@ def evaluate(config):
             start, end = i*ops.batch_size, (i+1)*ops.batch_size
             # be careful about the memory transfers to not use all gpu memory
             temp = x[start:end].to(config["device"])
-            ae_out, jet_choice, scores, interm_masses = model(temp)
+            ae_out, jet_choice  = model(temp)
             c1, c2, c1_out, c2_out, c1random, c2random, c1random_out, c2random_out, cp4 = ae_out
             c1, c2, c1_out, c2_out = c1.cpu(), c2.cpu(), c1_out.cpu(), c2_out.cpu()
             jet_choice = jet_choice.cpu()
@@ -149,7 +149,34 @@ if __name__ == "__main__":
     # pick up model configurations
     print(f"Using configuration file: {ops.config_file}")
     with open(ops.config_file, 'r') as fp:
-        model_config = json.load(fp)
+        if ops.config_file.endswith("yaml"):
+            model_config = {
+                       "batcher": {
+                         "minCparam": 0,
+                         "minNjetsAbovePtCut": 0,
+                         "minNjets": 0,
+                         "split": [
+                           0.9,
+                           0.1,
+                           0.0
+                         ],
+                         "reweight": 0,
+                         "eventSelection": "",
+                         "teacher": False
+                       },
+                       "trainer": {
+                         "precision": 32,
+                         "gradient_clip_val": 0.1
+                       },
+                       "batch_size": 2048
+                     }
+            model_config = {}
+            model_config["model"] = yaml.load(fp, Loader=yaml.Loader)
+            if 'lightning_logs' in ops.config_file:
+                model_config['model']['encoder_config']['do_gumbel'] = True
+                model_config['model']['encoder_config']['mass_scale'] = 100
+        else:
+            model_config = json.load(fp)
 
     # understand device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') if ops.gpu else "cpu"

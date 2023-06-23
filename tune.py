@@ -52,7 +52,7 @@ def train(config, init_config={}, inFile="", outDir="", max_steps = 100, device 
     init_config["model"]["encoder_config"]["out_dim"] = config["out_dim"]
     init_config["model"]["encoder_config"]["do_gumbel"] = config["do_gumbel"]
     init_config["model"]["encoder_config"]["mass_scale"] = config["mass_scale"]
-    init_config["model"]["loss_config"]["mass_scale"] = config["mass_scale"]
+    init_config["model"]["loss_config"]["scale_ISR_loss"] = config["scale_ISR_loss"]
     init_config["model"]["energyT"] = config["energyT"]
 
     # load data and split
@@ -111,12 +111,12 @@ if __name__ == "__main__":
 
     # configure search space
     config = {
-        "out_dim"   : tune.choice([2,3]),
-        "do_gumbel" : tune.choice([True,False]),
-        "energyT"   : tune.choice([True,False]),
-        "ae_dim"    : tune.choice([4, 8, 16]),
-        "scale_ISR_loss" : tune.loguniform(1e-1, 1e-2),
-        "mass_scale" : tune.loguniform(1e0, 1e3),
+        "out_dim"   : tune.choice([2]),
+        "do_gumbel" : tune.choice([False]),
+        "energyT"   : tune.choice([True]),
+        "ae_dim"    : tune.choice([4, 8]),
+        "scale_ISR_loss" : tune.choice([0.04,0.02, 0.01]),
+        "mass_scale" : tune.choice([50,100])
     }
 
     # make scheduler

@@ -208,14 +208,14 @@ class Encoder(nn.Module):
         cmass = ms_from_p4s(cp4)/self.mass_scale #arbitrary scaling factor 
 
         #build random candidates
-        randomchoice = self.get_random_choice(cchoice, mask)
-        crandom = torch.bmm(randomchoice.transpose(2,1), x)
-        crandom = self.cand_blocks[ib](Q=c, K=c, V=c, key_padding_mask=None, attn_mask=None)
-        crandomp4 = torch.bmm(randomchoice.transpose(2,1), jp4)
-        crandommass = ms_from_p4s(crandomp4)/self.mass_scale #arbitrary scaling factor
+        #randomchoice = self.get_random_choice(cchoice, mask)
+        #crandom = torch.bmm(randomchoice.transpose(2,1), x)
+        #crandom = self.cand_blocks[ib](Q=c, K=c, V=c, key_padding_mask=None, attn_mask=None)
+        #crandomp4 = torch.bmm(randomchoice.transpose(2,1), jp4)
+        #crandommass = ms_from_p4s(crandomp4)/self.mass_scale #arbitrary scaling factor
 
         c       = torch.cat([c[:,:,self.T:],cmass[:,:,None]],-1) #drop the category scores, add the mass
-        crandom = torch.cat([crandom[:,:,self.T:],crandommass[:,:,None]],-1) #drop the category scores, add the mass
+        #crandom = torch.cat([crandom[:,:,self.T:],crandommass[:,:,None]],-1) #drop the category scores, add the mass
 
         #autoencoders
         #cISR = c[:,0]
@@ -228,16 +228,17 @@ class Encoder(nn.Module):
         c2_latent = self.ae_in(c2)
         c2_out    = self.ae_out(c2_latent)
 
-        c1random        = crandom[:,0]
-        c1random_latent = self.ae_in(c1random)
-        c1random_out    = self.ae_out(c1random_latent)
+        #c1random        = crandom[:,0]
+        #c1random_latent = self.ae_in(c1random)
+        #c1random_out    = self.ae_out(c1random_latent)
 
-        c2random        = crandom[:,1]
-        c2random_latent = self.ae_in(c2random)
-        c2random_out    = self.ae_out(c2random_latent)
+        #c2random        = crandom[:,1]
+        #c2random_latent = self.ae_in(c2random)
+        #c2random_out    = self.ae_out(c2random_latent)
         #inspect(c,cmass,crandom,crandommass, c1_out,c2_out,c1random_out,c2random_out, x, originalx, jp4, cp4, cchoice, randomchoice)
 
-        return (c1, c2, c1_out, c2_out, c1random, c2random, c1random_out, c2random_out, cp4), cchoice
+        #return (c1, c2, c1_out, c2_out, c1random, c2random, c1random_out, c2random_out, cp4), cchoice
+        return (c1, c2, c1_out, c2_out, None, None,None, None, cp4), cchoice
 
     def get_jet_choice(self,x, debug=False):
         if self.T==3:
