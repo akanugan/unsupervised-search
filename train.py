@@ -13,6 +13,10 @@ from torch.utils.data import DataLoader, TensorDataset
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from sklearn.model_selection import train_test_split
+import torch._dynamo
+torch._dynamo.config.suppress_errors = True
+
+
 
 import h5py
 import datetime

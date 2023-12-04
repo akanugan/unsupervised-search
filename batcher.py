@@ -18,12 +18,12 @@ def loadDataFromH5(
         # energy
         e = np.array(f['source']['e'])
         e = np.nan_to_num(e)
-        e = np.log(e)
+        e = np.log(e + 1e-10)
         e[e==-np.inf] = 0
         # pt
         pt = np.array(f['source']['pt'])/1000. #takane input has wrong units for pt and mass
         pt = np.nan_to_num(pt)
-        pt = np.log(pt)
+        pt = np.log(pt + 1e-10)
         pt[pt==-np.inf] = 0
         # phi
         phi = np.array(f['source']['phi'])
