@@ -102,8 +102,10 @@ class StepLightning(pl.LightningModule):
         # beyond exponentially decay
         if N!=-1 and self.trainer.global_step >= N:
             lr_scale = 0.95
-            pg["lr"] = self.lr * (lr_scale**(self.trainer.global_step // N))
+            #pg["lr"] = self.lr * (lr_scale**(self.trainer.global_step // N))
+            pg["lr"] = self.lr * lr_scale # self.lr stays constant
     
+
     def loss(self, c1, c2, c1_out, c2_out, cp4):
 
         ''' 

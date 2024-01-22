@@ -58,8 +58,10 @@ def evaluate(config):
             start, end = i*ops.batch_size, (i+1)*ops.batch_size
             # be careful about the memory transfers to not use all gpu memory
             temp = x[start:end].to(config["device"])
-            ae_out, jet_choice, scores, interm_masses = model(temp)
-            c1, c2, c1_out, c2_out, c1random, c2random, c1random_out, c2random_out, cp4 = ae_out
+            #ae_out, jet_choice, scores, interm_masses = model(temp)
+            ae_out, jet_choice = model(temp)
+            #c1, c2, c1_out, c2_out, c1random, c2random, c1random_out, c2random_out, cp4 = ae_out
+            c1, c2, c1_out, c2_out, cp4 = ae_out
             c1, c2, c1_out, c2_out = c1.cpu(), c2.cpu(), c1_out.cpu(), c2_out.cpu()
             jet_choice = jet_choice.cpu()
             ae.append(torch.stack([c1, c2, c1_out, c2_out],-1))
@@ -117,7 +119,8 @@ def options():
     parser.add_argument("-j",  "--ncpu", help="Number of cores to use for multiprocessing. If not provided multiprocessing not done.", default=1, type=int)
     parser.add_argument("-w",  "--weights", help="Pretrained weights to evaluate with.", default=None, required=True)
     parser.add_argument("--normWeights",action="store_true", help="Store also normalization weights")
-    parser.add_argument("-b", "--batch_size", help="Batch size", default=10**5, type=int)
+    #parser.add_argument("-b", "--batch_size", help="Batch size", default=10**5, type=int)
+    parser.add_argument("-b", "--batch_size", help="Batch size", default=2048, type=int)
     parser.add_argument('--event_selection', default="", help="Enable event selection in batcher.")
     parser.add_argument('--doOverwrite', action="store_true", help="Overwrite already existing files.")
     parser.add_argument('--noTruthLabels', action="store_true", help="Option to tell data loader that the file does not contain truth labels")
