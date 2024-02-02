@@ -4,3 +4,12 @@ evaluate/
 experiments/
 inputs/
 utils/__pycache__/
+experiments/*
+*.ckpt
+*.csv
+*.yaml
+*.h5
+*.code*
+*.json
+*.pyc
+.gitignore
