@@ -22,7 +22,8 @@ def loadDataFromH5(
         e = np.log(e + 1e-10)
         e[e==-np.inf] = 0
         # pt
-        pt = np.array(f['source']['pt'])/1000. #takane input has wrong units for pt and mass
+        #pt = np.array(f['source']['pt'])/1000. #takane input has wrong units for pt and mass
+        pt = np.array(f['source']['pt']) # our samples have right units
         pt = np.nan_to_num(pt)
         pt = np.log(pt + 1e-10)
         pt[pt==-np.inf] = 0
