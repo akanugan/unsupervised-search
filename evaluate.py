@@ -189,7 +189,8 @@ if __name__ == "__main__":
     for inFileName in data:
 
         # make out file name and check if already exists
-        outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5","_transformer_classifier_our.h5")
+        #outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5","_transformer_classifier_our.h5")
+        outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5",f"_{ops.weights.split('/')[-2]}.h5")
         if os.path.isfile(outFileName) and not ops.doOverwrite:
             print(f"File already exists not evaluating on: {outFileName}")
             continue

@@ -10,8 +10,9 @@ import argparse
 
 # Load data in agreed upon format
 def loadDataFromH5(
-        inFile, 
+        inFile,
         normWeights=False,
+        #normWeights=True,
         labels=False
 ):
     with h5py.File(inFile, "r") as f:
@@ -22,8 +23,8 @@ def loadDataFromH5(
         e = np.log(e + 1e-10)
         e[e==-np.inf] = 0
         # pt
-        pt = np.array(f['source']['pt'])/1000. #takane input has wrong units for pt and mass
-        #pt = np.array(f['source']['pt']) # our samples have right units
+        #pt = np.array(f['source']['pt'])/1000. #takane input has wrong units for pt and mass
+        pt = np.array(f['source']['pt']) # our samples have right units
         pt = np.nan_to_num(pt)
         pt = np.log(pt + 1e-10)
         pt[pt==-np.inf] = 0
@@ -61,8 +62,23 @@ if __name__ == "__main__":
     parser.add_argument("-i",  "--inFile", default=None, help="Input file")
     ops = parser.parse_args()
 
-    X = loadDataFromH5(
+    # X = loadDataFromH5(
+    #     inFile = ops.inFile,
+    # )
+    # print(X.shape)
+    # print(X[0])
+
+    result = loadDataFromH5(
         inFile = ops.inFile,
     )
-    print(X.shape)
-    print(X[0])
+
+    # Check if result is a tuple (data and weights) or just data
+    if isinstance(result, tuple):
+        data, weights = result
+        print(data.shape)
+        print(data[0])
+        print("Weights shape:", weights.shape)
+        print("First weight:", weights[0])
+    else:
+        print(result.shape)
+        print(result[0])

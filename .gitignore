@@ -13,3 +13,6 @@ experiments/*
 *.json
 *.pyc
 .gitignore
+*.txt
+*.png
+*.pdf
