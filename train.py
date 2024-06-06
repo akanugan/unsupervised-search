@@ -17,7 +17,6 @@ import torch._dynamo
 torch._dynamo.config.suppress_errors = True
 
 
-
 import h5py
 import datetime
 import json
@@ -76,9 +75,11 @@ if __name__ == "__main__":
     train_dataloader = DataLoader(X_train, shuffle=True, num_workers=4, pin_memory=pin_memory, batch_size=config["batch_size"]) # if multiple inputs beside just X then use DataLoader(TensorDataset(X, ...), ...)
     val_dataloader = DataLoader(X_val, shuffle=False, num_workers=2, pin_memory=pin_memory, batch_size=config["batch_size"])
     valsig_dataloaders = [DataLoader(sig, shuffle=False, num_workers=2, pin_memory=pin_memory, batch_size=config["batch_size"]//2) for sig in Xsig]
-    
+    train_list_suffix = ops.inFile.split('/')[-1].split('.')[0]
+
+
     # make checkpoint dir
-    checkpoint_dir = os.path.join(ops.outDir, f'training_{datetime.datetime.now().strftime("%Y.%m.%d.%H.%M.%S")}')
+    checkpoint_dir = os.path.join(ops.outDir, f'training_{datetime.datetime.now().strftime("%Y.%m.%d.%H.%M.%S")}_{train_list_suffix}')
     print(f"Saving checkpoints to: {checkpoint_dir}")
     if not os.path.isdir(checkpoint_dir):
         os.makedirs(checkpoint_dir)
