@@ -1,11 +1,11 @@
 #!/bin/bash
 
 input_files=(
-    "../slimmed_ntuples/combined_QCD_new_HT500to700_100k.h5" 
-    "../slimmed_ntuples/combined_QCD_new_HT700to1000_100k.h5" 
-    "../slimmed_ntuples/combined_QCD_new_HT1000to1500_100k.h5" 
-    # "../slimmed_ntuples/combined_QCD_new_HT1500to2000_100k.h5" 
-    # "../slimmed_ntuples/combined_QCD_new_HT2000toInf_100k.h5"
+    #"../slimmed_ntuples/combined_QCD_new_HT500to700_100k.h5" 
+    #"../slimmed_ntuples/combined_QCD_new_HT700to1000_100k.h5" 
+    #"../slimmed_ntuples/combined_QCD_new_HT1000to1500_100k.h5" 
+    "../slimmed_ntuples/combined_QCD_new_HT1500to2000_100k.h5" 
+    "../slimmed_ntuples/combined_QCD_new_HT2000toInf_100k.h5"
 )
 
 output_dir="experiments/minimal/"

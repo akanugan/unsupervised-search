@@ -18,10 +18,21 @@ weight_files = [
     #"experiments/minimal/training_2024.04.26.12.44.52_combined_QCD_new_HT700to1000_100k/finalWeights.ckpt",
     #"experiments/minimal/training_2024.04.26.12.55.46_combined_QCD_new_HT2000toInf_100k/finalWeights.ckpt"
     #"experiments/minimal/training_2024.05.03.10.13.57_signal1500/finalWeights.ckpt"
-    "experiments/minimal/training_2024.05.03.10.46.56_signal1250/finalWeights.ckpt"
+    #"experiments/minimal/training_2024.05.03.10.46.56_signal1250/finalWeights.ckpt"
+    ##new trainings2
+    "experiments/minimal/training_2024.06.03.14.14.04_combined_QCD_new_HT500to700_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.06.06.12.33.25_combined_QCD_new_HT500to700_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.05.29.14.33.26_combined_QCD_new_HT700to1000_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.06.03.15.06.53_combined_QCD_new_HT700to1000_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.06.06.12.42.49_combined_QCD_new_HT1000to1500_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.05.29.14.42.51_combined_QCD_new_HT1000to1500_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.05.29.14.58.35_combined_QCD_new_HT1500to2000_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.05.29.13.59.11_combined_QCD_new_HT1500to2000_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.06.03.14.50.11_combined_QCD_new_HT2000toInf_100k/finalWeights.ckpt",
+    "experiments/minimal/training_2024.05.29.14.16.55_combined_QCD_new_HT2000toInf_100k/finalWeights.ckpt"
 ]
 
-output_dir = "evaluate/new_train/"
+output_dir = "evaluate/new_train2/"
 config_file = "config_files/minimal_config.json"
 
 def evaluate(command):
