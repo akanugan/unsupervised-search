@@ -156,7 +156,9 @@ if __name__ == "__main__":
         run_config=air.RunConfig(
             name=f"tune_{datetime.datetime.now().strftime('%Y.%m.%d.%H.%M.%S')}",
             progress_reporter=reporter,
-            local_dir=ops.outDir,
+            #local_dir=ops.outDir,
+            #storage_path=ops.outDir, #fix this later
+            #storage_path="experiments/minimal/"
         ),
         param_space=config,
     )

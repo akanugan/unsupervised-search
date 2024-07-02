@@ -63,7 +63,7 @@ class StepLightning(pl.LightningModule):
         #print(loss["loss"])
         return loss["loss"]
     
-    def training_step(self, batch, batch_idx, debug=False):
+    def training_step(self, batch, batch_idx, debug=True):
         if debug and batch_idx==0:
             x = batch
             (c1, c2, c1_out, c2_out, cp4), jet_choice = self(x)
@@ -75,7 +75,7 @@ class StepLightning(pl.LightningModule):
             print("training step jet_choice",jet_choice[0])
         return self.step(batch, batch_idx, "train")
 
-    def validation_step(self, batch, batch_idx, debug=False):
+    def validation_step(self, batch, batch_idx, debug=True):
         if debug and batch_idx==0:
             x = batch
             (c1, c2, c1_out, c2_out, cp4), jet_choice = self(x)

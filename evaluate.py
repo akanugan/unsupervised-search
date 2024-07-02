@@ -34,6 +34,7 @@ def evaluate(config):
     config["model"]["weights"] = ops.weights
 
     print(f"evaluating on {config['inFileName']}")
+    print(f'Using weights: {ops.weights}')
 
     # load model
     model = StepLightning(**config["model"])
@@ -66,6 +67,7 @@ def evaluate(config):
             jet_choice = jet_choice.cpu()
             ae.append(torch.stack([c1, c2, c1_out, c2_out],-1))
             p.append(jet_choice)
+            
 
         # concat
         p = torch.concat(p)
@@ -73,12 +75,31 @@ def evaluate(config):
         c1, c2, c1_out, c2_out = [ae[:,i] for i in range(4)]
         mse_loss = torch.mean((c1_out-c1)**2 + (c2_out-c2)**2,-1)
         mse_crossed_loss = torch.mean((c1_out-c2)**2 + (c2_out-c1)**2,-1)
-        
+        #debug
+        print("Model Predictions:")
+        print("Predictions with current weights:")
+        print(p[0], p[1])
+        print("Loss Values:")
+        print(f"Mean Squared Error Loss: {mse_loss}")
+        print(f"Mean Squared Error Crossed Loss: {mse_crossed_loss}")
+
         # convert x
         x = x_to_p4(x)
         # apply mask to x
         x = x.masked_fill(mask.unsqueeze(-1).repeat(1,1,x.shape[-1]).bool(), 0)
         pmom_max, pidx_max = get_mass_max(x, p)
+
+        #debug
+        print("Data Processing:")
+        print("Input Data Shape:")
+        print(x.shape)
+        print("Mask Shape:")
+        print(mask.shape)
+        print("Intermediate Outputs:")
+        print("Jet Assignments Max:")
+        print(pidx_max[0],pidx_max[1],pidx_max[2])
+        print("Predicted 4-momentum Max:")
+        print(pmom_max[0],pmom_max[1],pmom_max[2])
                 
         # make output
         outData = {
@@ -154,6 +175,9 @@ if __name__ == "__main__":
     with open(ops.config_file, 'r') as fp:
         model_config = json.load(fp)
 
+    print("Model Configuration:")
+    print(model_config)
+
     # understand device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') if ops.gpu else "cpu"
 
@@ -162,7 +186,8 @@ if __name__ == "__main__":
     for inFileName in data:
 
         # make out file name and check if already exists
-        outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5","_transformer_classifier.h5")
+        #outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5","_transformer_classifier.h5")
+        outFileName = os.path.join(ops.outDir, os.path.basename(inFileName)).replace(".h5",f"_{ops.weights.split('/')[-2]}.h5")
         if os.path.isfile(outFileName) and not ops.doOverwrite:
             print(f"File already exists not evaluating on: {outFileName}")
             continue

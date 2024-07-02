@@ -25,8 +25,9 @@ if __name__ == '__main__':
     for input_file in input_files:
         for weight_file in weight_files:
             command = "python3 evaluate.py -c {} -i {} -o {} -w {} --noTruthLabels --gpu --doOverwrite".format(config_file, input_file, output_dir, weight_file)
+            print(command)
             #commands.append(command)
-            subprocess.call(command, shell=True)
+            #subprocess.call(command, shell=True)
     # num_processes = 4  
 
     # with Pool(processes=num_processes) as pool:
